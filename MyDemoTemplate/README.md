@@ -138,7 +138,7 @@ oc logs -f $(oc get pod | grep ${APP_NAME}-builder | awk '{print $1}')
 wait until pod is ready
 
 ```
-oc get pod | grep -v build | grep -v NAME | grep ${APP_NAME} | awk '{print $1}' | xargs oc get pod
+oc get pods
 ```
 
 ## Openshift test
