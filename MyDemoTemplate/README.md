@@ -20,6 +20,7 @@ cd ${APP_NAME}
 quarkus ext add org.kie.kogito:kogito-quarkus
 quarkus ext add quarkus-resteasy-jackson
 quarkus ext add io.quarkus:quarkus-smallrye-openapi
+quarkus ext add io.quarkus:quarkus-smallrye-health
 ```
 
 ## Build & Run
