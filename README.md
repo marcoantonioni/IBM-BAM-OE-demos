@@ -2,7 +2,7 @@
 
 Demos and other stuffs
 
-NOTE: The projects if this folder have been created using RH Quarkus distribution 
+NOTE: The projects in this folder have been created using RH Quarkus distribution 
 
 ```
 RH_QM_PLUGIN_VER="2.7.6.Final-redhat-00009"
