@@ -30,7 +30,7 @@ quarkus build
 quarkus dev
 ```
 
-## Test
+## Test local
 
 ```
 URL=http://localhost:8080
@@ -44,6 +44,121 @@ curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content
 SERVICE_NAME=TestProcess
 curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content-Type: application/json' | jq .
 ```
+
+## Openshift deploy
+
+```
+TNS=marco-test-demo
+export PRJ_CTX_DIR="MyDemoTemplate"
+export PRJ="https://github.com/marcoantonioni/IBM-BAM-OE-demos"
+export APP_NAME=my-demo-template
+export REPLICAS=1
+
+OG_NAME=my-kogito-operator
+OPERATOR_NAME=bamoe-kogito-operator
+CSV_VER="8.0.1-1"
+IMG_REGISTRY_URL="image-registry.openshift-image-registry.svc:5000"
+
+#------------------------------
+# Namespace e Secret
+oc new-project ${TNS}
+oc create -n ${TNS} secret docker-registry my-pull-secret --docker-server=${REGISTRY_URL} --docker-username=${REGISTRY_USER} --docker-password=${REGISTRY_PWD}
+oc secrets -n ${TNS} link builder my-pull-secret --for=pull
+oc secrets -n ${TNS} link default my-pull-secret --for=pull
+
+#------------------------------
+# OperatorGroup
+echo "
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  generateName: my-kogito-operator-
+  name: ${OG_NAME}
+  namespace: ${TNS}
+spec:
+  targetNamespaces:
+  - ${TNS}
+" | oc apply -f -
+
+#------------------------------
+# Subscription
+echo "
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ${OPERATOR_NAME}
+  namespace: ${TNS}
+spec:
+  channel: 8.x
+  installPlanApproval: Automatic
+  name: bamoe-kogito-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: bamoe-kogito-operator.${CSV_VER}
+" | oc apply -f -
+
+#------------------------------
+# KogitoBuild
+echo "
+kind: KogitoBuild
+apiVersion: rhpam.kiegroup.org/v1
+metadata:
+  name: ${APP_NAME}
+  namespace: ${TNS}
+spec:
+  gitSource:
+    contextDir: ${PRJ_CTX_DIR}
+    uri: ${PRJ}
+  type: RemoteSource
+" | oc apply -f -
+
+#------------------------------
+# KogitoRuntime
+echo "
+apiVersion: rhpam.kiegroup.org/v1
+kind: KogitoRuntime
+metadata:
+  name: ${APP_NAME}
+  namespace: ${TNS}
+spec:
+  replicas: ${REPLICAS}
+  image: >-
+    ${IMG_REGISTRY_URL}/${TNS}/${APP_NAME}
+  runtime: quarkus
+" | oc apply -f -
+```
+
+wait until the build completes
+
+```
+oc logs -f $(oc get pod | grep ${APP_NAME}-builder | awk '{print $1}')
+```
+
+wait until pod is ready
+
+```
+oc get pod | grep -v build | grep -v NAME | grep ${APP_NAME} | awk '{print $1}' | xargs oc get pod
+```
+
+## Openshift test
+
+get the service URL and run the tests
+
+```
+URL=$(oc get route ${APP_NAME} -o jsonpath='{.spec.host}')
+
+SERVICE_NAME=TestRule
+
+curl -s -w"\n" -X GET ${URL}/hello
+
+curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "age": 16 }' | jq .
+curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "age": 25 }' | jq .
+
+SERVICE_NAME=TestProcess
+curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content-Type: application/json' | jq .
+```
+
+
 
 
 
