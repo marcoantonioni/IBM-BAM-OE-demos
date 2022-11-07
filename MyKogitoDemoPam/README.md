@@ -110,8 +110,35 @@ curl -s -X POST -H 'accept: application/json' -H 'Content-Type: application/json
 
 ## Deploy on OpenShift cluster using IBM Kogito Operator
 
-[TBD] See "..." at link "..."
+For deployment operations in OpenShift environment refer to the following post.
 
+The post references two projects similar to these that were not created with the maven libraries certified by Red Hat.
+
+To perform the deployment of this project modify the CR KogitoBuild as follow
+
+https://community.ibm.com/community/user/automation/blogs/marco-antonioni/2022/11/05/use-ibm-kogito-operator-to-deploy-pamdm-applicatio
+
+```
+TNS="...your-namespace..."
+APP_NAME="...your-app-name..."
+
+PRJ_CTX_DIR="MyKogitoDemoPam"
+PRJ="https://github.com/marcoantonioni/IBM-BAM-OE-demos"
+kind: KogitoBuild
+apiVersion: rhpam.kiegroup.org/v1
+metadata:
+  name: ${APP_NAME}
+  namespace: ${TNS}
+spec:
+  gitSource:
+    contextDir: ${PRJ_CTX_DIR}
+    uri: ${PRJ}
+  type: RemoteSource
+```
+
+Remember that IBM BAM OE version 8.0 does not yet officially support the BPMN runtime.
+
+https://access.redhat.com/documentation/en-us/ibm_business_automation_manager_open_editions/8.0/html-single/getting_started_with_red_hat_build_of_kogito_in_ibm_business_automation_manager_open_editions/index
 
 # Useful infos
 

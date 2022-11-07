@@ -92,7 +92,31 @@ curl -s -X POST ${URL}/${SERVICE_NAME} -H 'accept: application/json' -H 'Content
 
 ## Deploy on OpenShift cluster using IBM Kogito Operator
 
-[TBD] See "..." at link "..."
+For deployment operations in OpenShift environment refer to the following post.
+
+The post references two projects similar to these that were not created with the maven libraries certified by Red Hat.
+
+To perform the deployment of this project modify the CR KogitoBuild as follow
+
+https://community.ibm.com/community/user/automation/blogs/marco-antonioni/2022/11/05/use-ibm-kogito-operator-to-deploy-pamdm-applicatio
+
+```
+TNS="...your-namespace..."
+APP_NAME="...your-app-name..."
+
+PRJ_CTX_DIR="MyKogitoDemoDm"
+PRJ="https://github.com/marcoantonioni/IBM-BAM-OE-demos"
+kind: KogitoBuild
+apiVersion: rhpam.kiegroup.org/v1
+metadata:
+  name: ${APP_NAME}
+  namespace: ${TNS}
+spec:
+  gitSource:
+    contextDir: ${PRJ_CTX_DIR}
+    uri: ${PRJ}
+  type: RemoteSource
+```
 
 
 # Useful infos
