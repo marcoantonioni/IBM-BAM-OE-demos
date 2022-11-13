@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmn:definitions xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns="https://kiegroup.org/dmn/_8D608AA9-284B-4D34-B202-800947C896D0" xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/" xmlns:kie="http://www.drools.org/kie/dmn/1.2" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="_D6D6D3FF-CA39-46CC-BD37-CD8AE4D4A15F" name="PerformanceConsumeCpu" typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" namespace="https://kiegroup.org/dmn/_8D608AA9-284B-4D34-B202-800947C896D0">
+  <dmn:extensionElements/>
+  <dmn:inputData id="_97A15059-B115-4FAB-9290-B55BF809DD2B" name="loops">
+    <dmn:extensionElements/>
+    <dmn:variable id="_55BBAC8A-3D56-4D85-9B2A-7F024B8398A7" name="loops" typeRef="number"/>
+  </dmn:inputData>
+  <dmn:businessKnowledgeModel id="_0A010D55-50E3-455C-AFF0-5825D6B4B41C" name="invokeWasteCpu">
+    <dmn:extensionElements/>
+    <dmn:variable id="_3487372C-E62A-4546-8298-35E53CA907DE" name="invokeWasteCpu" typeRef="string"/>
+    <dmn:encapsulatedLogic id="_10C63D1F-3609-4161-ACD5-0D7335D6AC02" kind="Java">
+      <dmn:formalParameter id="_89958666-027B-488D-A0B9-15583093B5AA" name="loops" typeRef="number"/>
+      <dmn:formalParameter id="_847E7213-A66D-4FDC-8658-52276F6CA34C" name="innerLoops" typeRef="number"/>
+      <dmn:context id="_76DC685C-6182-4B04-BEE9-DB3ED5476E74">
+        <dmn:contextEntry>
+          <dmn:variable id="_FD1CE83B-D98B-41B1-A714-AFAE44805ED9" name="class" typeRef="string"/>
+          <dmn:literalExpression id="_4AF80757-605B-4A0D-BE6C-893F0E143D8C">
+            <dmn:text>"marco.demos.kogito.ConsumeCPU"</dmn:text>
+          </dmn:literalExpression>
+        </dmn:contextEntry>
+        <dmn:contextEntry>
+          <dmn:variable id="_C8A88609-F123-457E-A35E-06A110F85B50" name="method signature" typeRef="string"/>
+          <dmn:literalExpression id="_BC51AB43-C34E-43C1-983B-FFC92A7EB2A3">
+            <dmn:text>"wasteCpu(java.math.BigDecimal, java.math.BigDecimal)"</dmn:text>
+          </dmn:literalExpression>
+        </dmn:contextEntry>
+      </dmn:context>
+    </dmn:encapsulatedLogic>
+  </dmn:businessKnowledgeModel>
+  <dmn:decision id="_9C61CE8F-5C02-4805-8924-3A51926A59CA" name="ConsumeCpu">
+    <dmn:extensionElements/>
+    <dmn:variable id="_F6F4E54E-F4CC-4B87-91F4-E7F0E3661548" name="ConsumeCpu" typeRef="number"/>
+    <dmn:informationRequirement id="_AAD2BB3A-64AC-486A-9A9B-C35D2EFA75DA">
+      <dmn:requiredInput href="#_97A15059-B115-4FAB-9290-B55BF809DD2B"/>
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="_B18F3FB7-4FA4-4214-80CE-524B9B04CDEA">
+      <dmn:requiredInput href="#_23ADFF87-0D0D-4F94-AE6C-137ACD855022"/>
+    </dmn:informationRequirement>
+    <dmn:knowledgeRequirement id="_BC2C2C4A-62AE-4A56-8FDA-678DE72ACD7A">
+      <dmn:requiredKnowledge href="#_0A010D55-50E3-455C-AFF0-5825D6B4B41C"/>
+    </dmn:knowledgeRequirement>
+    <dmn:literalExpression id="_8D63F387-0C90-4EED-8237-0AB4C7A2D544">
+      <dmn:text>invokeWasteCpu(loops, innerLoops)</dmn:text>
+    </dmn:literalExpression>
+  </dmn:decision>
+  <dmn:inputData id="_23ADFF87-0D0D-4F94-AE6C-137ACD855022" name="innerLoops">
+    <dmn:extensionElements/>
+    <dmn:variable id="_0566EE1E-8024-4DC2-BE82-20A4277BF5E3" name="innerLoops" typeRef="number"/>
+  </dmn:inputData>
+  <dmn:association id="_B7C5A281-C130-4E65-A9FF-41EC8D4A1A7A" associationDirection="None">
+    <dmn:sourceRef href="#_9C61CE8F-5C02-4805-8924-3A51926A59CA"/>
+    <dmn:targetRef href="#_F4815A9E-1C77-4E0E-AB2F-CE11BCFD004E"/>
+  </dmn:association>
+  <dmn:textAnnotation id="_F4815A9E-1C77-4E0E-AB2F-CE11BCFD004E" textFormat="text/plain">
+    <dmn:text>crazy-consume</dmn:text>
+  </dmn:textAnnotation>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_479EF928-90B6-44DE-B189-FC0C9FEBB970" name="DRG">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="_76DC685C-6182-4B04-BEE9-DB3ED5476E74">
+            <kie:width>50</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>343</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_4AF80757-605B-4A0D-BE6C-893F0E143D8C">
+            <kie:width>343</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_BC51AB43-C34E-43C1-983B-FFC92A7EB2A3">
+            <kie:width>343</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_10C63D1F-3609-4161-ACD5-0D7335D6AC02">
+            <kie:width>50</kie:width>
+            <kie:width>513</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="_8D63F387-0C90-4EED-8237-0AB4C7A2D544">
+            <kie:width>300</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="dmnshape-drg-_97A15059-B115-4FAB-9290-B55BF809DD2B" dmnElementRef="_97A15059-B115-4FAB-9290-B55BF809DD2B" isCollapsed="false">
+        <dmndi:DMNStyle>
+          <dmndi:FillColor red="255" green="255" blue="255"/>
+          <dmndi:StrokeColor red="0" green="0" blue="0"/>
+          <dmndi:FontColor red="0" green="0" blue="0"/>
+        </dmndi:DMNStyle>
+        <dc:Bounds x="104" y="221" width="100" height="50"/>
+        <dmndi:DMNLabel/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="dmnshape-drg-_0A010D55-50E3-455C-AFF0-5825D6B4B41C" dmnElementRef="_0A010D55-50E3-455C-AFF0-5825D6B4B41C" isCollapsed="false">
+        <dmndi:DMNStyle>
+          <dmndi:FillColor red="255" green="255" blue="255"/>
+          <dmndi:StrokeColor red="0" green="0" blue="0"/>
+          <dmndi:FontColor red="0" green="0" blue="0"/>
+        </dmndi:DMNStyle>
+        <dc:Bounds x="437" y="128" width="192" height="61"/>
+        <dmndi:DMNLabel/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="dmnshape-drg-_9C61CE8F-5C02-4805-8924-3A51926A59CA" dmnElementRef="_9C61CE8F-5C02-4805-8924-3A51926A59CA" isCollapsed="false">
+        <dmndi:DMNStyle>
+          <dmndi:FillColor red="255" green="255" blue="255"/>
+          <dmndi:StrokeColor red="0" green="0" blue="0"/>
+          <dmndi:FontColor red="0" green="0" blue="0"/>
+        </dmndi:DMNStyle>
+        <dc:Bounds x="191" y="88" width="134" height="57"/>
+        <dmndi:DMNLabel/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="dmnshape-drg-_23ADFF87-0D0D-4F94-AE6C-137ACD855022" dmnElementRef="_23ADFF87-0D0D-4F94-AE6C-137ACD855022" isCollapsed="false">
+        <dmndi:DMNStyle>
+          <dmndi:FillColor red="255" green="255" blue="255"/>
+          <dmndi:StrokeColor red="0" green="0" blue="0"/>
+          <dmndi:FontColor red="0" green="0" blue="0"/>
+        </dmndi:DMNStyle>
+        <dc:Bounds x="311" y="221" width="100" height="50"/>
+        <dmndi:DMNLabel/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="dmnshape-drg-_F4815A9E-1C77-4E0E-AB2F-CE11BCFD004E" dmnElementRef="_F4815A9E-1C77-4E0E-AB2F-CE11BCFD004E" isCollapsed="false">
+        <dmndi:DMNStyle>
+          <dmndi:FillColor red="255" green="255" blue="255"/>
+          <dmndi:StrokeColor red="0" green="0" blue="0"/>
+          <dmndi:FontColor red="0" green="0" blue="0"/>
+        </dmndi:DMNStyle>
+        <dc:Bounds x="388" y="1.5" width="100" height="50"/>
+        <dmndi:DMNLabel/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="dmnedge-drg-_AAD2BB3A-64AC-486A-9A9B-C35D2EFA75DA-AUTO-TARGET" dmnElementRef="_AAD2BB3A-64AC-486A-9A9B-C35D2EFA75DA">
+        <di:waypoint x="154" y="246"/>
+        <di:waypoint x="258" y="145"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="dmnedge-drg-_BC2C2C4A-62AE-4A56-8FDA-678DE72ACD7A-AUTO-TARGET" dmnElementRef="_BC2C2C4A-62AE-4A56-8FDA-678DE72ACD7A">
+        <di:waypoint x="533" y="158.5"/>
+        <di:waypoint x="325" y="116.5"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="dmnedge-drg-_B18F3FB7-4FA4-4214-80CE-524B9B04CDEA-AUTO-TARGET" dmnElementRef="_B18F3FB7-4FA4-4214-80CE-524B9B04CDEA">
+        <di:waypoint x="361" y="246"/>
+        <di:waypoint x="258" y="145"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="dmnedge-drg-_B7C5A281-C130-4E65-A9FF-41EC8D4A1A7A-AUTO-SOURCE-AUTO-TARGET" dmnElementRef="_B7C5A281-C130-4E65-A9FF-41EC8D4A1A7A">
+        <di:waypoint x="325" y="116.5"/>
+        <di:waypoint x="388" y="26.5"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</dmn:definitions>
