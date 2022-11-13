@@ -1,5 +1,85 @@
 # MyKogitoPerformanceDm Project
 
+
+## Example of posts
+
+### post PerformanceAdult
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceAdult' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "age": 20
+}'
+```
+
+### post PerformanceConsumeCpu
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceConsumeCpu' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "loops": 100000,
+  "innerLoops": 50000
+}'
+```
+
+### post PerformanceConsumeCpuForTime
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceConsumeCpuForTime' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "milliseconds": 100
+}'
+```
+
+### post PerformanceDriver
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceDriver' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "age": 20,
+  "driveLicense": true,
+  "violations": 4
+}'
+```
+
+### post PerformanceSuspendDriveLicense
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceSuspendDriveLicense' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "actualViolations": 5,
+  "newViolation": 1,
+  "violationThisYear": 2
+}'
+```
+
+### post PerformanceLotsOfRules
+```
+curl -X 'POST' \
+  'http://localhost:8080/PerformanceLotsOfRules' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "Lev1Input1": true,
+  "Lev1Input2": 5,
+  "Lev1Input3": true,
+  "Lev2Input1": "GOOD",
+  "Lev2Input2": true,
+  "Lev2Input3": 20,
+  "Lev2Input4": "HIGH"
+}'
+```
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
