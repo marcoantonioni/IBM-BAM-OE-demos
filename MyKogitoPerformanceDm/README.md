@@ -1,7 +1,50 @@
 # MyKogitoPerformanceDm Project
 
+## Memos
+
+Add to pom.xml
+```
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
+      <version>1.30.0.Final</version>
+    </dependency>
+```
+
+Create ServiceMonitor
+```
+TNS=???
+MONITORED_APP_NAME=my-performance-dm
+SM_NAME=monitor-${MONITORED_APP_NAME}
+echo "
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: ${SM_NAME}
+  name: ${SM_NAME}
+  namespace: ${TNS}
+spec:
+  endpoints:
+  - interval: 15s
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  selector:
+    matchLabels:
+      app: ${MONITORED_APP_NAME}
+" | oc apply --force -f -
+```
+
+TBV: for ServiceMonitor [selector: matchLabels] any label or must be ==> app-with-metrics: ${MONITORED_APP_NAME}
+
 
 ## Example of posts
+
+Local test
+
+http://localhost:8080/q/metrics
+
 
 ### post PerformanceAdult
 ```
