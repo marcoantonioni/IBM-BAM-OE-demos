@@ -13,7 +13,7 @@ Add to pom.xml
 
 Create ServiceMonitor
 ```
-TNS=???
+TNS=my-performance-dm
 MONITORED_APP_NAME=my-performance-dm
 SM_NAME=monitor-${MONITORED_APP_NAME}
 echo "
