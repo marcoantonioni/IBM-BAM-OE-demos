@@ -60,20 +60,21 @@
       <artifactId>quarkus-smallrye-health</artifactId>
     </dependency>
 
-<!--
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
       <version>1.30.0.Final</version>
     </dependency>
--->
 
+<!-- NON genera metriche Kogito-->
+<!--
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-metrics</artifactId>
     </dependency>
+-->
 
-<!--
+<!-- NON Compila
 <dependency>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kogito-addons-monitoring-prometheus</artifactId>
