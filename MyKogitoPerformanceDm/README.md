@@ -4,11 +4,7 @@
 
 Add to pom.xml
 ```
-    <dependency>
-      <groupId>org.kie.kogito</groupId>
-      <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
-      <version>1.30.0.Final</version>
-    </dependency>
+
 ```
 
 Create ServiceMonitor
@@ -16,7 +12,8 @@ Create ServiceMonitor
 TNS=my-performance-dm
 MONITORED_APP_NAME=my-performance-dm
 SM_NAME=monitor-${MONITORED_APP_NAME}
-echo "
+
+cat <<EOF | oc apply -f -
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -27,16 +24,52 @@ metadata:
 spec:
   endpoints:
   - interval: 15s
+    port: http
     targetPort: 8080
     path: /q/metrics
     scheme: http
+  namespaceSelector:
+    matchNames:
+    - ${TNS}
   selector:
     matchLabels:
       app: ${MONITORED_APP_NAME}
-" | oc apply --force -f -
+EOF
 ```
 
-TBV: for ServiceMonitor [selector: matchLabels] any label or must be ==> app-with-metrics: ${MONITORED_APP_NAME}
+Prereq. installare Grafana
+```
+TNS=my-performance-dm
+MONITORED_APP_NAME=my-performance-dm
+
+cat <<EOF | oc apply -f -
+apiVersion: integreatly.org/v1alpha1
+kind: Grafana
+metadata:
+  name: grafana-${MONITORED_APP_NAME}
+  namespace: ${TNS}
+spec:
+  ingress:
+    enabled: true
+  config:
+    auth:
+      disable_signout_menu: true
+    auth.anonymous:
+      enabled: true
+    log:
+      level: warn
+      mode: console
+    security:
+      admin_password: secret
+      admin_user: root
+  dashboardLabelSelector:
+    - matchExpressions:
+        - key: app
+          operator: In
+          values:
+            - my-kogito-performance-dm
+EOF
+```
 
 
 ## Example of posts

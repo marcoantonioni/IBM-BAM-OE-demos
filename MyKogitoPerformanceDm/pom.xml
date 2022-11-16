@@ -60,12 +60,15 @@
       <artifactId>quarkus-smallrye-health</artifactId>
     </dependency>
 
+    <!-- come da riferimento link RH
+    https://access.redhat.com/documentation/en-us/red_hat_decision_manager/7.13/html/getting_started_with_red_hat_build_of_kogito_in_red_hat_decision_manager/con-rhpam-kogito-operator-with-prometheus-and-grafana_deploying-kogito-microservices-on-openshift
+    -->
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>monitoring-prometheus-quarkus-addon</artifactId>
     </dependency>
 
-<!--
+<!-- Non certificato da RH
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
