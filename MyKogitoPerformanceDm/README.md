@@ -2,8 +2,12 @@
 
 ## Memos
 
-Add to pom.xml
+Prometheus metrics, add to pom.xml
 ```
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>monitoring-prometheus-quarkus-addon</artifactId>
+    </dependency>
 
 ```
 
@@ -37,7 +41,7 @@ spec:
 EOF
 ```
 
-Prereq. installare Grafana
+Prereq. install Grafana
 ```
 TNS=my-performance-dm
 MONITORED_APP_NAME=my-performance-dm
