@@ -23,7 +23,7 @@ public class ConsumeCPU {
         int _milliseconds = milliseconds.intValue();
         if (_milliseconds < 1) _milliseconds = 1;
 
-        System.out.println("===> wasteCpuForTime milliseconds: "+_milliseconds);        
+        System.out.println("===> thread["+Thread.currentThread().getName()+"] wasteCpuForTime milliseconds: "+_milliseconds);        
 
         boolean stop = false;
         long _startTime = System.currentTimeMillis();
