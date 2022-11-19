@@ -111,6 +111,8 @@ increase(api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}[1m])
 - cpu by pod (use your pod name)
 sum(kube_pod_resource_limit{resource='cpu',pod='my-kogito-performance-dm-5684687f84-qf8sp',namespace='my-performance-dm'})
 
+- rules executed in time frame
+increase(boolean_dmn_result_total[1m])
 
 ## Example of posts
 
