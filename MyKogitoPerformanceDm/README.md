@@ -14,7 +14,7 @@ Prometheus metrics, add to pom.xml
 Create ServiceMonitor
 ```
 TNS=my-performance-dm
-MONITORED_APP_NAME=my-performance-dm
+MONITORED_APP_NAME=my-kogito-performance-dm
 SM_NAME=monitor-${MONITORED_APP_NAME}
 
 cat <<EOF | oc apply -f -
@@ -41,10 +41,27 @@ spec:
 EOF
 ```
 
+```
+TNS=my-performance-dm
+MONITORED_APP_NAME=my-kogito-performance-dm
+cat <<EOF | oc apply -f -
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: ${TNS}
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app: ${MONITORED_APP_NAME}
+EOF
+```
+
 Prereq. install Grafana
 ```
 TNS=my-performance-dm
-MONITORED_APP_NAME=my-performance-dm
+MONITORED_APP_NAME=my-kogito-performance-dm
 
 cat <<EOF | oc apply -f -
 apiVersion: integreatly.org/v1alpha1
@@ -71,9 +88,28 @@ spec:
         - key: app
           operator: In
           values:
-            - my-kogito-performance-dm
+            - ${MONITORED_APP_NAME}
 EOF
 ```
+
+### Example of Prometheus metrics
+
+- quantiles
+api_execution_elapsed_seconds{artifactId="MyKogitoPerformanceDm"}
+
+- max wait time
+http_server_requests_seconds_max{method="GET",outcome="SUCCESS",status="200",uri="/monitoring/dashboards/domain-dashboard-MyKogitoPerformanceDm_1.0.0-SNAPSHOT-PerformanceConsumeCpuForTime.json",}
+
+http_server_requests_seconds_max{method="GET",outcome="SUCCESS",status="200",uri="/monitoring/dashboards/domain-dashboard-MyKogitoPerformanceDm_1.0.0-SNAPSHOT-PerformanceLotsOfRules.json",}
+
+- total http requests
+api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}
+
+- total http requests in last timeframe
+increase(api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}[1m])
+
+- cpu by pod (use your pod name)
+sum(kube_pod_resource_limit{resource='cpu',pod='my-kogito-performance-dm-5684687f84-qf8sp',namespace='my-performance-dm'})
 
 
 ## Example of posts
