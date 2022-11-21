@@ -45,18 +45,18 @@
         <kie:ComponentsWidthsExtension>
           <kie:ComponentWidths dmnElementRef="_76DC685C-6182-4B04-BEE9-DB3ED5476E74">
             <kie:width>50</kie:width>
-            <kie:width>100</kie:width>
-            <kie:width>343</kie:width>
+            <kie:width>171</kie:width>
+            <kie:width>363</kie:width>
           </kie:ComponentWidths>
           <kie:ComponentWidths dmnElementRef="_4AF80757-605B-4A0D-BE6C-893F0E143D8C">
-            <kie:width>343</kie:width>
+            <kie:width>363</kie:width>
           </kie:ComponentWidths>
           <kie:ComponentWidths dmnElementRef="_BC51AB43-C34E-43C1-983B-FFC92A7EB2A3">
-            <kie:width>343</kie:width>
+            <kie:width>363</kie:width>
           </kie:ComponentWidths>
           <kie:ComponentWidths dmnElementRef="_10C63D1F-3609-4161-ACD5-0D7335D6AC02">
             <kie:width>50</kie:width>
-            <kie:width>513</kie:width>
+            <kie:width>604</kie:width>
           </kie:ComponentWidths>
           <kie:ComponentWidths dmnElementRef="_8D63F387-0C90-4EED-8237-0AB4C7A2D544">
             <kie:width>300</kie:width>
