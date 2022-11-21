@@ -95,23 +95,29 @@ EOF
 ### Example of Prometheus metrics
 
 - quantiles
+
 api_execution_elapsed_seconds{artifactId="MyKogitoPerformanceDm"}
 
 - max wait time
+
 http_server_requests_seconds_max{method="GET",outcome="SUCCESS",status="200",uri="/monitoring/dashboards/domain-dashboard-MyKogitoPerformanceDm_1.0.0-SNAPSHOT-PerformanceConsumeCpuForTime.json",}
 
 http_server_requests_seconds_max{method="GET",outcome="SUCCESS",status="200",uri="/monitoring/dashboards/domain-dashboard-MyKogitoPerformanceDm_1.0.0-SNAPSHOT-PerformanceLotsOfRules.json",}
 
 - total http requests
+
 api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}
 
 - total http requests in last timeframe
+
 increase(api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}[1m])
 
 - cpu by pod (use your pod name)
+
 sum(kube_pod_resource_limit{resource='cpu',pod='my-kogito-performance-dm-5684687f84-qf8sp',namespace='my-performance-dm'})
 
 - rules executed in time frame (breakdown of rules invocations)
+
 increase(boolean_dmn_result_total[1m])
 
 ## Example of posts
