@@ -92,6 +92,116 @@ spec:
 EOF
 ```
 
+## Payload samples
+
+### FlightRebooking
+
+```
+export BG_PAYLOAD="{  \"Flight List\": [    {      \"Flight Number\": \"100\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2022-01-01T07:00:00.000Z\",      \"Arrival\": \"2222-01-01T07:00:00.000Z\",      \"Capacity\": 10,      \"Status\": \"cancelled\"    },    {      \"Flight Number\": \"101\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-01-01T07:00:00.000Z\",      \"Arrival\": \"2223-01-01T07:00:00.000Z\",      \"Capacity\": 8,      \"Status\": \"scheduled\"    },    {      \"Flight Number\": \"102\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-02-01T07:00:00.000Z\",      \"Arrival\": \"2223-02-01T07:00:00.000Z\",      \"Capacity\": 5,      \"Status\": \"scheduled\"    }		  ],  \"Passenger List\": [    {      \"Name\": \"passenger1\",      \"Status\": \"bronze\",      \"Miles\": 200,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger2\",      \"Status\": \"bronze\",      \"Miles\": 80,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger3\",      \"Status\": \"bronze\",      \"Miles\": 120,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger4\",      \"Status\": \"bronze\",      \"Miles\": 160,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger5\",      \"Status\": \"bronze\",      \"Miles\": 10,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger6\",      \"Status\": \"bronze\",      \"Miles\": 300,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger7\",      \"Status\": \"silver\",      \"Miles\": 550,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger8\",      \"Status\": \"silver\",      \"Miles\": 600,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger9\",      \"Status\": \"silver\",      \"Miles\": 500,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger10\",      \"Status\": \"gold\",      \"Miles\": 1000,      \"Flight Number\": \"100\"    }		  ]}"
+echo ${BG_PAYLOAD} > ./payload
+curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POST http://localhost:8080/FlightRebooking -d @./payload | jq .
+```
+
+
+
+```
+{
+  "Flight List": [
+    {
+      "Flight Number": "100",
+      "From": "Roma",
+      "To": "Nowhere",
+      "Departure": "2022-01-01T07:00:00.000Z",
+      "Arrival": "2222-01-01T07:00:00.000Z",
+      "Capacity": 10,
+      "Status": "cancelled"
+    },
+    {
+      "Flight Number": "101",
+      "From": "Roma",
+      "To": "Nowhere",
+      "Departure": "2023-01-01T07:00:00.000Z",
+      "Arrival": "2223-01-01T07:00:00.000Z",
+      "Capacity": 8,
+      "Status": "scheduled"
+    },
+    {
+      "Flight Number": "102",
+      "From": "Roma",
+      "To": "Nowhere",
+      "Departure": "2023-02-01T07:00:00.000Z",
+      "Arrival": "2223-02-01T07:00:00.000Z",
+      "Capacity": 5,
+      "Status": "scheduled"
+    }
+		
+  ],
+  "Passenger List": [
+    {
+      "Name": "passenger1",
+      "Status": "bronze",
+      "Miles": 200,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger2",
+      "Status": "bronze",
+      "Miles": 80,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger3",
+      "Status": "bronze",
+      "Miles": 120,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger4",
+      "Status": "bronze",
+      "Miles": 160,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger5",
+      "Status": "bronze",
+      "Miles": 10,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger6",
+      "Status": "bronze",
+      "Miles": 300,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger7",
+      "Status": "silver",
+      "Miles": 550,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger8",
+      "Status": "silver",
+      "Miles": 600,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger9",
+      "Status": "silver",
+      "Miles": 500,
+      "Flight Number": "100"
+    },
+    {
+      "Name": "passenger10",
+      "Status": "gold",
+      "Miles": 1000,
+      "Flight Number": "100"
+    }
+		
+  ]
+}
+```
+
 ### Example of Prometheus metrics
 
 #### quantiles
