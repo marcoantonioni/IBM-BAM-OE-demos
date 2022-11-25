@@ -210,6 +210,11 @@ curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POS
 api_execution_elapsed_seconds{artifactId="MyKogitoPerformanceDm"}
 ```
 
+last minute
+```
+increase(api_execution_elapsed_seconds{artifactId="MyKogitoPerformanceDm"}[1m])
+```
+
 #### max wait time
 
 ```
