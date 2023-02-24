@@ -293,8 +293,16 @@ EOF
 
 ```
 export BG_PAYLOAD="{  \"Flight List\": [    {      \"Flight Number\": \"100\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2022-01-01T07:00:00.000Z\",      \"Arrival\": \"2222-01-01T07:00:00.000Z\",      \"Capacity\": 10,      \"Status\": \"cancelled\"    },    {      \"Flight Number\": \"101\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-01-01T07:00:00.000Z\",      \"Arrival\": \"2223-01-01T07:00:00.000Z\",      \"Capacity\": 8,      \"Status\": \"scheduled\"    },    {      \"Flight Number\": \"102\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-02-01T07:00:00.000Z\",      \"Arrival\": \"2223-02-01T07:00:00.000Z\",      \"Capacity\": 5,      \"Status\": \"scheduled\"    }		  ],  \"Passenger List\": [    {      \"Name\": \"passenger1\",      \"Status\": \"bronze\",      \"Miles\": 200,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger2\",      \"Status\": \"bronze\",      \"Miles\": 80,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger3\",      \"Status\": \"bronze\",      \"Miles\": 120,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger4\",      \"Status\": \"bronze\",      \"Miles\": 160,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger5\",      \"Status\": \"bronze\",      \"Miles\": 10,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger6\",      \"Status\": \"bronze\",      \"Miles\": 300,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger7\",      \"Status\": \"silver\",      \"Miles\": 550,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger8\",      \"Status\": \"silver\",      \"Miles\": 600,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger9\",      \"Status\": \"silver\",      \"Miles\": 500,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger10\",      \"Status\": \"gold\",      \"Miles\": 1000,      \"Flight Number\": \"100\"    }		  ]}"
-echo ${BG_PAYLOAD} > ./payload
-curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POST http://localhost:8080/FlightRebooking -d @./payload | jq .
+
+echo ${BG_PAYLOAD} > /tmp/payload
+
+# small payload
+time curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POST http://localhost:8080/FlightRebooking -d @/tmp/payload | jq .
+
+
+# big payload
+time curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POST http://localhost:8080/FlightRebooking -d @/tmp/payload-big | jq .
+
 ```
 
 
@@ -449,7 +457,9 @@ increase(boolean_dmn_result_total[1m])
 
 Local test
 
-http://localhost:8080/q/metrics
+curl http://localhost:8080/q/metrics
+
+curl http://localhost:8080/q/metrics | grep MyKogitoPerformanceDm
 
 
 ### post PerformanceAdult
@@ -460,7 +470,7 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{
   "age": 20
-}'
+}' | jq .
 ```
 
 ### post PerformanceConsumeCpu
@@ -472,7 +482,7 @@ curl -X 'POST' \
   -d '{
   "loops": 100000,
   "innerLoops": 50000
-}'
+}' | jq .
 ```
 
 ### post PerformanceConsumeCpuForTime
@@ -483,7 +493,7 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{
   "milliseconds": 100
-}'
+}' | jq .
 ```
 
 ### post PerformanceDriver
@@ -496,7 +506,7 @@ curl -X 'POST' \
   "age": 20,
   "driveLicense": true,
   "violations": 4
-}'
+}' | jq .
 ```
 
 ### post PerformanceSuspendDriveLicense
@@ -509,7 +519,7 @@ curl -X 'POST' \
   "actualViolations": 5,
   "newViolation": 1,
   "violationThisYear": 2
-}'
+}' | jq .
 ```
 
 ### post PerformanceLotsOfRules
@@ -526,7 +536,7 @@ curl -X 'POST' \
   "Lev2Input2": true,
   "Lev2Input3": 20,
   "Lev2Input4": "HIGH"
-}'
+}' | jq .
 ```
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
