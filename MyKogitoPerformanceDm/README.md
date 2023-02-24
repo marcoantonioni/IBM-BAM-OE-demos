@@ -1,5 +1,197 @@
 # MyKogitoPerformanceDm Project
 
+
+## Deployment steps
+```
+REGISTRY_URL=registry.redhat.io
+REGISTRY_USER=...your id...
+REGISTRY_PWD=...your password...
+
+
+TNS=my-performance-dm
+BUILD_NAME=my-kogito-performance-dm
+
+oc new-project ${TNS}
+oc project ${TNS}
+
+oc create -n ${TNS} secret docker-registry my-pull-secret --docker-server=${REGISTRY_URL} --docker-username=${REGISTRY_USER} --docker-password=${REGISTRY_PWD}
+oc secrets -n ${TNS} link builder my-pull-secret --for=pull
+oc secrets -n ${TNS} link default my-pull-secret --for=pull
+
+#------------------------------------------------------------------------------------------
+# Kogito Operator
+
+OPERATOR_NAME=bamoe-kogito-operator
+CSV_VER="8.0.2-1"
+
+cat <<EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ${OPERATOR_NAME}
+  namespace: ${TNS}
+spec:
+  channel: 8.x
+  installPlanApproval: Automatic
+  name: bamoe-kogito-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: bamoe-kogito-operator.${CSV_VER}
+EOF
+
+#------------------------------------------------------------------------------------------
+# OperatorGroup
+OG_NAME=my-kogito-operator-group
+
+cat <<EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  generateName: ${OG_NAME}-
+  name: ${OG_NAME}
+  namespace: ${TNS}
+spec:
+  targetNamespaces:
+  - ${TNS}
+EOF
+
+# oc get csv -n ${TNS} ... wait for Succeeded
+
+#------------------------------------------------------------------------------------------
+# Kogito Build
+
+cat <<EOF | oc apply -f -
+apiVersion: rhpam.kiegroup.org/v1
+kind: KogitoBuild
+metadata:
+  name: ${BUILD_NAME}
+  namespace: ${TNS}
+spec:
+  gitSource:
+    contextDir: MyKogitoPerformanceDm
+    uri: 'https://github.com/marcoantonioni/IBM-BAM-OE-demos'
+  type: RemoteSource
+EOF
+
+# oc get build -n ${TNS} | grep "builder" ... wait for Complete
+
+#------------------------------------------------------------------------------------------
+# Kogito Runtime
+
+cat <<EOF | oc apply -f -
+apiVersion: rhpam.kiegroup.org/v1
+kind: KogitoRuntime
+metadata:
+  name: ${BUILD_NAME}
+  namespace: ${TNS}
+spec:
+  image: >-
+    image-registry.openshift-image-registry.svc:5000/${TNS}/${BUILD_NAME}:latest
+  replicas: 1
+  resources:
+    limits:
+      cpu: '1'
+    requests:
+      cpu: '0.5'
+  runtime: quarkus
+EOF
+
+# oc get KogitoRuntime -n ${TNS} -o yaml ... wait for Deployed
+
+#------------------------------------------------------------------------------------------
+# Service Monitor / Prometheus
+
+cat <<EOF | oc apply -f -
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: ${BUILD_NAME}
+  name: ${BUILD_NAME}
+  namespace: ${TNS}
+spec:
+  endpoints:
+  - interval: 15s
+    port: http
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - ${TNS}
+  selector:
+    matchLabels:
+      app: ${BUILD_NAME}
+EOF
+
+cat <<EOF | oc apply -f -
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: ${TNS}
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app: ${BUILD_NAME}
+EOF
+
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    enableUserWorkload: true
+EOF
+
+# !!! prerequisite: Install Grafana
+cat <<EOF | oc apply -f -
+apiVersion: integreatly.org/v1alpha1
+kind: Grafana
+metadata:
+  name: grafana-${BUILD_NAME}
+  namespace: ${TNS}
+spec:
+  ingress:
+    enabled: true
+  config:
+    auth:
+      disable_signout_menu: true
+    auth.anonymous:
+      enabled: true
+    log:
+      level: warn
+      mode: console
+    security:
+      admin_password: secret
+      admin_user: root
+  dashboardLabelSelector:
+    - matchExpressions:
+        - key: app
+          operator: In
+          values:
+            - ${BUILD_NAME}
+EOF
+
+```
+
+### Test OCP route
+
+```
+export BG_PAYLOAD="{  \"Flight List\": [    {      \"Flight Number\": \"100\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2022-01-01T07:00:00.000Z\",      \"Arrival\": \"2222-01-01T07:00:00.000Z\",      \"Capacity\": 10,      \"Status\": \"cancelled\"    },    {      \"Flight Number\": \"101\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-01-01T07:00:00.000Z\",      \"Arrival\": \"2223-01-01T07:00:00.000Z\",      \"Capacity\": 8,      \"Status\": \"scheduled\"    },    {      \"Flight Number\": \"102\",      \"From\": \"Roma\",      \"To\": \"Nowhere\",      \"Departure\": \"2023-02-01T07:00:00.000Z\",      \"Arrival\": \"2223-02-01T07:00:00.000Z\",      \"Capacity\": 5,      \"Status\": \"scheduled\"    }		  ],  \"Passenger List\": [    {      \"Name\": \"passenger1\",      \"Status\": \"bronze\",      \"Miles\": 200,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger2\",      \"Status\": \"bronze\",      \"Miles\": 80,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger3\",      \"Status\": \"bronze\",      \"Miles\": 120,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger4\",      \"Status\": \"bronze\",      \"Miles\": 160,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger5\",      \"Status\": \"bronze\",      \"Miles\": 10,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger6\",      \"Status\": \"bronze\",      \"Miles\": 300,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger7\",      \"Status\": \"silver\",      \"Miles\": 550,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger8\",      \"Status\": \"silver\",      \"Miles\": 600,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger9\",      \"Status\": \"silver\",      \"Miles\": 500,      \"Flight Number\": \"100\"    },    {      \"Name\": \"passenger10\",      \"Status\": \"gold\",      \"Miles\": 1000,      \"Flight Number\": \"100\"    }		  ]}"
+
+echo ${BG_PAYLOAD} > /tmp/payload
+
+BUILD_NAME=my-kogito-performance-dm
+SERVER_URL=http://$(oc get route ${BUILD_NAME} -o jsonpath='{.spec.host}')
+curl -s -H 'accept: application/json' -H 'Content-Type: application/json' -X POST ${SERVER_URL}/FlightRebooking -d @/tmp/payload | jq .
+```
+
+
 ## Memos
 
 Prometheus metrics, add to pom.xml
