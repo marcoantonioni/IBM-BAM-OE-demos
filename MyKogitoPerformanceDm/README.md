@@ -99,6 +99,20 @@ EOF
 # oc get KogitoRuntime -n ${TNS} -o yaml ... wait for Deployed
 
 #------------------------------------------------------------------------------------------
+# Enable Prometheus user workload monitoring (run once)
+
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    enableUserWorkload: true
+EOF
+
+#------------------------------------------------------------------------------------------
 # Service Monitor / Prometheus
 
 cat <<EOF | oc apply -f -
@@ -135,17 +149,6 @@ spec:
   serviceMonitorSelector:
     matchLabels:
       app: ${BUILD_NAME}
-EOF
-
-cat <<EOF | oc apply -f -
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cluster-monitoring-config
-  namespace: openshift-monitoring
-data:
-  config.yaml: |
-    enableUserWorkload: true
 EOF
 
 # !!! prerequisite: Install Grafana
