@@ -98,6 +98,19 @@ EOF
 
 # oc get KogitoRuntime -n ${TNS} -o yaml ... wait for Deployed
 
+cat <<EOF | oc apply -f -
+apiVersion: rhpam.kiegroup.org/v1
+kind: KogitoRuntime
+metadata:
+  name: ${BUILD_NAME}-no-limits
+  namespace: ${TNS}
+spec:
+  image: >-
+    image-registry.openshift-image-registry.svc:5000/${TNS}/${BUILD_NAME}:latest
+  replicas: 1
+  runtime: quarkus
+EOF
+
 #------------------------------------------------------------------------------------------
 # Enable Prometheus user workload monitoring (run once)
 
@@ -136,6 +149,29 @@ spec:
   selector:
     matchLabels:
       app: ${BUILD_NAME}
+EOF
+
+cat <<EOF | oc apply -f -
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: ${BUILD_NAME}
+  name: ${BUILD_NAME}-no-limits
+  namespace: ${TNS}
+spec:
+  endpoints:
+  - interval: 15s
+    port: http
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - ${TNS}
+  selector:
+    matchLabels:
+      app: ${BUILD_NAME}-no-limits
 EOF
 
 cat <<EOF | oc apply -f -
@@ -203,7 +239,6 @@ Prometheus metrics, add to pom.xml
       <groupId>org.kie.kogito</groupId>
       <artifactId>monitoring-prometheus-quarkus-addon</artifactId>
     </dependency>
-
 ```
 
 Create ServiceMonitor
@@ -233,6 +268,36 @@ spec:
   selector:
     matchLabels:
       app: ${MONITORED_APP_NAME}
+EOF
+```
+
+Create ServiceMonitor for KogitoRuntime without resource limits
+```
+TNS=my-performance-dm
+MONITORED_APP_NAME=my-kogito-performance-dm
+SM_NAME=monitor-${MONITORED_APP_NAME}
+
+cat <<EOF | oc apply -f -
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: ${SM_NAME}
+  name: ${SM_NAME}-no-limits
+  namespace: ${TNS}
+spec:
+  endpoints:
+  - interval: 15s
+    port: http
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - ${TNS}
+  selector:
+    matchLabels:
+      app: ${MONITORED_APP_NAME}-no-limits
 EOF
 ```
 
@@ -444,6 +509,12 @@ increase(api_http_response_code_total{artifactId="MyKogitoPerformanceDm"}[1m])
 
 ```
 sum(kube_pod_resource_limit{resource='cpu',pod='my-kogito-performance-dm-5684687f84-qf8sp',namespace='my-performance-dm'})
+```
+
+#### cpu by pods in namespace
+
+```
+pod:container_cpu_usage:sum{namespace='my-performance-dm'}
 ```
 
 #### rules executed in time frame (breakdown of rules invocations)
